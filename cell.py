@@ -7,37 +7,77 @@ from graphics import Point, Line
 # Each wall should exist by default
   # public data members
 class Cell:
-    def __init__(self, window):
+    def __init__(self, win=None):
         self.has_left_wall = True
         self.has_right_wall = True
         self.has_top_wall = True
         self.has_bottom_wall = True
+        self.visited = False
         self._x1 = None
         self._x2 = None
         self._y1 = None
         self._y2 = None
-        self.window = window
+        self._win = win
 
     
-    # draw itself
-    def draw(self, x1, y1, x2 ,y2):
+    # DRAW() METHOD
+    def draw(self, x1, y1, x2, y2):
+        if self._win is None:
+            return
         self._x1 = x1
         self._x2 = x2
         self._y1 = y1
         self._y2 = y2
-        # draw the walls
         if self.has_left_wall:
             line = Line(Point(x1, y1), Point(x1, y2))
-            self.window.draw_line(line)
-        if self.has_right_wall:
-            line = Line(Point(x2, y1), Point(x2, y2))
-            self.window.draw_line(line)
+            self._win.draw_line(line)
+        else:
+            line = Line(Point(x1, y1), Point(x1, y2))
+            self._win.draw_line(line, "white")
         if self.has_top_wall:
             line = Line(Point(x1, y1), Point(x2, y1))
-            self.window.draw_line(line)
+            self._win.draw_line(line)
+        else:
+            line = Line(Point(x1, y1), Point(x2, y1))
+            self._win.draw_line(line, "white")
+        if self.has_right_wall:
+            line = Line(Point(x2, y1), Point(x2, y2))
+            self._win.draw_line(line)
+        else:
+            line = Line(Point(x2, y1), Point(x2, y2))
+            self._win.draw_line(line, "white")
         if self.has_bottom_wall:
             line = Line(Point(x1, y2), Point(x2, y2))
-            self.window.draw_line(line)
+            self._win.draw_line(line)
+        else:
+            line = Line(Point(x1, y2), Point(x2, y2))
+            self._win.draw_line(line, "white")
+
         # draw the walls
 
 
+    # DRAW_MOVE() METHOD
+    # Draw path between two cells from the center of one to another.
+    # if undo is not set , line is drawn is "red", otherwise make it "gray".
+    # Use the x/y of the 2 cells in question to decide how to draw the line connecting them.
+    def draw_move(self, to_cell, undo=False):
+        half_length = abs(self._x2 - self._x1) // 2
+        x_center = half_length + self._x1
+        y_center = half_length + self._y1
+
+        half_length2 = abs(to_cell._x2 - to_cell._x1) // 2
+        x_center2 = half_length2 + to_cell._x1
+        y_center2 = half_length2 + to_cell._y1
+
+        fill_color = "red"
+        if undo:
+            fill_color = "gray"
+
+        line = Line(Point(x_center, y_center), Point(x_center2, y_center2))
+        self._win.draw_line(line, fill_color)
+
+  
+
+
+
+        

@@ -14,12 +14,33 @@ from tkinter import Tk, BOTH, Canvas
 
 class Window:
     def __init__(self, width, height):
-        self.root = Tk()
-        self.root.title("Maze Solver")
-        self.canvas = Canvas(self.root, width=width, height=height)
-        self.canvas.pack(fill=BOTH, expand=1)
-        self.running = False
-        self.root.protocol("WM_DELETE_WINDOW", self.close)
+        self.__root = Tk()
+        self.__root.title("Maze Solver")
+        self.__root.protocol("WM_DELETE_WINDOW", self.close)
+        self.__canvas = Canvas(self.__root, bg="white", height=height, width=width)
+        self.__canvas.pack(fill=BOTH, expand=1)
+        self.__running = False
+
+
+    # REDRAW() METHOD
+    # this method should call the root widget's update_idletasks() and update() methods
+    # This will force the window to redraw itself
+
+    def redraw(self):
+        self.__root.update_idletasks()
+        self.__root.update()
+        
+
+    # WAIT_FOR_CLOSE() METHOD
+    # set the data memeber we created to track the "running" state of the window to True
+    # call the self.redraw() method over and over as long as the running state remains True.
+
+    def wait_for_close(self):
+        self.__running = True
+        while self.__running:
+            self.redraw()
+        print("window closed...")
+
 
     # We need a draw_line method on our Window class.
     # It should take an instance of a Line and a fill_color as inputs,
@@ -27,33 +48,17 @@ class Window:
 
     # DRAW_LINE() METHOD
     def draw_line(self, line, fill_color="black"):
-        line.draw(self.canvas, fill_color)
+        line.draw(self.__canvas, fill_color)
 
-# REDRAW() METHOD
-# this method should call the root widget's update_idletasks() and update() methods
-# This will force the window to redraw itself
 
-    def redraw(self):
-        self.root.update_idletasks()
-        self.root.update()
-
-# WAIT_FOR_CLOSE() METHOD
-# set the data memeber we created to track the "running" state of the window to True
-# call the self.redraw() method over and over as long as the running state remains True.
-
-    def wait_for_close(self):
-        self.running = True
-        while self.running:
-            self.redraw()
-
-# CLOSE() METHOD
-# set the running state to False
-# add another line to the constructor to call the protocol method on the root widget
-# to connect your close method to the "delete window" action.
+    # CLOSE() METHOD
+    # set the running state to False
+    # add another line to the constructor to call the protocol method on the root widget
+    # to connect your close method to the "delete window" action.
 
     def close(self):
-        self.running = False
-        self.root.quit()
+        self.__running = False
+
 
 # POINT CLASS
 # It should simply store 2 public data members, x and y
@@ -78,7 +83,7 @@ class Line:
 # The "fill_color" will just be a string like " black" or "red".
 # Next it should call the canvas's create_line() method.
 
-    def draw(self, canvas, fill_color):
+    def draw(self, canvas, fill_color="black"):
         canvas.create_line(self.p1.x, self.p1.y, self.p2.x, self.p2.y, fill=fill_color, width=2)    
 
 
